@@ -13,7 +13,7 @@ apt-get upgrade -y
 USER="pidb"
 
 python_source_dir="/home/$USER/Documents/rpi-installer/Code" 
-python_destination_dir="/home/$USER/code
+python_destination_dir="/home/$USER/code"
 
 html_source_dir="/home/$USER/Documents/rpi-installer/html"
 html_destination_dir="/var/www/html"
@@ -25,8 +25,7 @@ mv "$python_source_dir"/* "$python_destination_dir/"
 # check if html_dest_dir exists
 
 mv "$html_source_dir"/* "$html_destination_dir/"
-
-echo "Files moved succesfully
+echo "Files moved succesfully"
 
 # Set visudo option
 
