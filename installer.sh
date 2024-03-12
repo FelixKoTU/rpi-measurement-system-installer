@@ -6,7 +6,7 @@ echo "System update and installing packages:"
 PACKAGES="php sqlite3 php-sqlite3 apache2"
 apt-get update
 apt-get upgrade -y
-apt-get install "$PACKAGES" -y
+apt-get install $PACKAGES -y
 # ------
 # Enable ssh
 echo "Enable ssh:"
@@ -22,12 +22,15 @@ fi
 echo "Move files to correct directories:"
 USER=$(whoami)
 
-PYTHON_SOURCE_DIR="/home/$USER/Documents/rpi-installer/Code" 
+PYTHON_SOURCE_DIR="./Code/Python" 
 PYTHON_DESTINATION_DIR="/home/$USER/code"
 
-HTML_SOURCE_DIR="/home/$USER/Documents/rpi-installer/html"
+HTML_SOURCE_DIR="./Code/html"
 HTML_DESTINATION_DIR="/var/www/html"
- 
+echo "Create root project folders."
+[ -d "$PYTHON_DESTINATION_DIR" ] || mkdir -p "$PYTHON_DESTINATION_DIR"
+[ -d "$HTML_DESTINATION_DIR" ] || mkdir -p "$HTML_DESTINATION_DIR"
+
 echo "Moving files."
 mv "$PYTHON_SOURCE_DIR"/* "$PYTHON_DESTINATION_DIR/"
 mv "$HTML_SOURCE_DIR"/* "$HTML_DESTINATION_DIR/"
@@ -84,7 +87,6 @@ servstat=$(service apache2 status)
 if echo "$servstat" | grep -q "active (running)"; then
     echo "Apache2 web server set up succesfully. Paste the local IP address into the web browser of the RPi."
     echo "Local IP adress: $(hostname -I)"
-    echo "Opening up web browser ... $(chromium-browser &)"
 else
     echo "Apache2 is not running."
 fi
