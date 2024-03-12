@@ -1,13 +1,15 @@
 #!/bin/sh
-# installer.sh installs the necessary packages and dependencies for the measurement system
+# installer.sh handles packages, dependencies, user permissions, system configurations for the rpi measurement system.
 # ------
 # Install packages
+echo "System update and installing packages:"
 PACKAGES="php sqlite3 php-sqlite3 apache2"
 apt-get update
 apt-get upgrade -y
-#apt-get install $PACKAGES -y
+apt-get install "$PACKAGES" -y
 # ------
 # Enable ssh
+echo "Enable ssh:"
 systemctl enable ssh
 systemctl start ssh
 if sudo systemctl is-active --quiet ssh; then
@@ -17,7 +19,8 @@ else
 fi
 # ------
 # Move files to correct directories
-USER="pidb"
+echo "Move files to correct directories:"
+USER=$(whoami)
 
 PYTHON_SOURCE_DIR="/home/$USER/Documents/rpi-installer/Code" 
 PYTHON_DESTINATION_DIR="/home/$USER/code"
@@ -27,11 +30,20 @@ HTML_DESTINATION_DIR="/var/www/html"
  
 echo "Moving files."
 mv "$PYTHON_SOURCE_DIR"/* "$PYTHON_DESTINATION_DIR/"
-
 mv "$HTML_SOURCE_DIR"/* "$HTML_DESTINATION_DIR/"
-echo "Files moved succesfully"
+if [ "$(ls -A "$PYTHON_DESTINATION_DIR")" ]; then
+    echo "Python files moved succesfully"
+else
+    echo "Error while moving files. Check destination directory: ${PYTHON_DESTINATION_DIR}."
+fi
+if [ "$(ls -A $HTML_DESTINATION_DIR)" ]; then
+    echo "HTML files moved succesfully"
+else
+    echo "Error while moving files. Check destination directory: ${HTML_DESTINATION_DIR}."
+fi
 # ------
-# Set visudo option (root)
+# Set visudo permissions
+echo "Set visudo permissions"
 CUSTOM_CMDS_LINE="Cmnd_Alias CUSTOM_CMDS = /usr/bin/pkill, /usr/sbin/shutdown -h now, /usr/sbin/shutdown -r now"
 WWW_DATA_LINE="www-data ALL = NOPASSWD: CUSTOM_CMDS"
 # Check if the lines already exist in the sudoers file
@@ -43,16 +55,36 @@ else
     echo "visudo lines already exist in /etc/sudoers."
 fi
 # ------
-# Enable php
-# check if Apache2 user has been set up correctly
-# set .htpasswd password and adjust '/etc/apache2/apache2.conf' file
+# Apache2 webserver
+# check if Apache2 user has been set up correctly and cofigure all necessary files
 HTACCESS_FILE="/var/www/html/.htaccess"
-USER_HOME="/home/$USER/Documents"
-HTAPASSWD_FILE="$USER_HOME/.htpasswd"
+USER_HOME_DOCS="/home/$USER/Documents"
+HTPASSWD_FILE="$USER_HOME_DOCS/.htpasswd"
 
-echo "AuthUserFile $HTAPASSWD_FILE" > "$HTACCESS_FILE"
+# create the .htpasswd file and rewrite .htaccess
+echo "Create the .htpasswd file and rewrite .htaccess."
+htpasswd −c −B "$HTPASSWD_FILE" "$USER"
+
+echo "AuthUserFile $HTPASSWD_FILE" > "$HTACCESS_FILE"
 echo "AuthType Basic" > "$HTACCESS_FILE"
 echo 'AuthName "My restricted Area"' > "$HTACCESS_FILE"
 echo "Require valid-user" > "$HTACCESS_FILE"
 echo "ErrorDocument 404 /404.html" > "$HTACCESS_FILE"
+# enable php in html
 echo "AddHandler application/x-httpd-php.html" > "$HTACCESS_FILE"
+
+# adjust '/etc/apache2/apache2.conf' file and restart web server
+echo "Adjust '/etc/apache2/apache2.conf' file and restart web server."
+sed -i 's/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
+a2enmod rewrite
+service apache2 restart
+
+# check if apache2 web server is running
+servstat=$(service apache2 status)
+if echo "$servstat" | grep -q "active (running)"; then
+    echo "Apache2 web server set up succesfully. Paste the local IP address into the web browser of the RPi."
+    echo "Local IP adress: $(hostname -I)"
+    echo "Opening up web browser ... $(chromium-browser &)"
+else
+    echo "Apache2 is not running."
+fi
