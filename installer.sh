@@ -6,7 +6,7 @@ echo "System update and installing packages:"
 PACKAGES="php sqlite3 php-sqlite3 apache2"
 apt-get update
 apt-get upgrade -y
-apt-get install "$PACKAGES" -y
+apt-get install $PACKAGES -y
 # ------
 # Enable ssh
 echo "Enable ssh:"
@@ -19,15 +19,33 @@ else
 fi
 # ------
 # Move files to correct directories
-echo "Move files to correct directories:"
-USER=$(whoami)
+prompt_input() {
+    read -p "Please enter your username (non root user): " USER
+    echo "You entered: $USER"
+    read -p "Is the username you entered correct? [Y/n] " CONFIRM
+}
 
-PYTHON_SOURCE_DIR="/home/$USER/Documents/rpi-installer/Code" 
+prompt_input
+
+while [ "$CONFIRM" != "Y" ] && [ "$CONFIRM" != "y" ] && [ "$CONFIRM" != "" ]; do
+    echo "Invalid input. Please try again."
+    prompt_input
+done
+
+echo "Username entered successfully!"
+echo -e "\n"
+echo "Move files to correct directories:"
+
+PYTHON_SOURCE_DIR="./Code/Python" 
 PYTHON_DESTINATION_DIR="/home/$USER/code"
 
-HTML_SOURCE_DIR="/home/$USER/Documents/rpi-installer/html"
+HTML_SOURCE_DIR="./Code/html"
 HTML_DESTINATION_DIR="/var/www/html"
- 
+
+echo "Creating directories:"
+mkdir -p "$PYTHON_DESTINATION_DIR"
+mkdir -p "$HTML_DESTINATION_DIR"
+
 echo "Moving files."
 mv "$PYTHON_SOURCE_DIR"/* "$PYTHON_DESTINATION_DIR/"
 mv "$HTML_SOURCE_DIR"/* "$HTML_DESTINATION_DIR/"
@@ -61,10 +79,15 @@ HTACCESS_FILE="/var/www/html/.htaccess"
 USER_HOME_DOCS="/home/$USER/Documents"
 HTPASSWD_FILE="$USER_HOME_DOCS/.htpasswd"
 
-# create the .htpasswd file and rewrite .htaccess
-echo "Create the .htpasswd file and rewrite .htaccess."
-htpasswd −c −B "$HTPASSWD_FILE" "$USER"
+# create the .htpasswd file with user password
+echo "Create the .htpasswd file."
+printf "Enter password:"
+stty -echo
+read PASSWORD
+stty echo
+echo "$PASSWORD" | htpasswd −c −B "$HTPASSWD_FILE" "$USER"
 
+# rewrite .htaccess file
 echo "AuthUserFile $HTPASSWD_FILE" > "$HTACCESS_FILE"
 echo "AuthType Basic" > "$HTACCESS_FILE"
 echo 'AuthName "My restricted Area"' > "$HTACCESS_FILE"
@@ -84,7 +107,6 @@ servstat=$(service apache2 status)
 if echo "$servstat" | grep -q "active (running)"; then
     echo "Apache2 web server set up succesfully. Paste the local IP address into the web browser of the RPi."
     echo "Local IP adress: $(hostname -I)"
-    echo "Opening up web browser ... $(chromium-browser &)"
 else
     echo "Apache2 is not running."
 fi
