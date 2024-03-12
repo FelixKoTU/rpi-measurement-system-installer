@@ -41,8 +41,12 @@ PYTHON_DESTINATION_DIR="/home/$USER/code"
 
 HTML_SOURCE_DIR="./Code/html"
 HTML_DESTINATION_DIR="/var/www/html"
+<<<<<<< HEAD
 
 echo "Creating directories:"
+=======
+echo "Create root project folders."
+>>>>>>> 4e422891b817480aa53901e6dbd94378b106d1cd
 mkdir -p "$PYTHON_DESTINATION_DIR"
 mkdir -p "$HTML_DESTINATION_DIR"
 
