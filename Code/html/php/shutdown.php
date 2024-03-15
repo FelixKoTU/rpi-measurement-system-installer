@@ -1,1 +1,7 @@
-<?php exec("/sbin/shutdown -h now"); ?>
+<?php
+// Redirect to index.html and then restart raspberry pi.
+header("Location: ../index.html");
+flush();
+exec("sudo /sbin/shutdown -h now");
+exit;
+?>

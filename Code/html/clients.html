@@ -1,54 +1,37 @@
 <?php
+//***********************************************************
+//	if(isset($_POST['start1']))
+//	{
+//		$pythonPath = '/usr/bin/python3';
+//		$scriptPath = '/var/www/html/code/saveTest.py';
+//		$mystring  = $pythonPath . ' ' . $scriptPath;
+//		exec($mystring, $output, $returnCode);
+//		sleep(20);
+//		if(!empty($output))
+//		{
+//		echo '<pre>';
+//		echo implode(PHP_EOL, $output);
+//		echo '</pre>';
+//		}
+//	
+//	}
+//***********************************************************
 	if(isset($_POST['start1']))
 	{
-		$mystring  = exec('/home/pi/code/saveTest.py > /dev/null 2>&1 &');
+		$mystring = exec('/home/pidb/code/saveTest.py > /home/pidb/code/logs/output.log 2>&1 &');
 		sleep(5);
 		exec('pgrep saveTest.py', $output);
-	//******************Debugging lines**********************************
-	//	$mystring = exec('/home/pi/code/saveTest.py > /dev/null 2>&1 &', $output);
-	//	var_dump($output);
-	//*******************END*********************************************
-	
 		if($output)
 		{
 			echo '<script>alert("Successfully connected!")</script>';
-		} 
-		else 
-		{
-			echo '<script>alert("Can not connect to Arduino -> Please check connection")</script>';
 		}
-	
-		//exec("sudo pkill python"); idk why sudo and python processes are started tbh (command for showing running python processes pgrep -lf python)
-	
+		else
+		{
+			echo '<script>alert("Cannot connect to Arduino -> Please check connection!")</script>';
+		}
 	}
 	if(isset($_POST['stop1'])){
 		exec("sudo pkill saveTest");
-	}
-?>
-
-<?php
-	if(isset($_POST['start2']))
-	{
-		$mystring = exec('/home/pi/code/checkdaily.py > /dev/null 2>&1 &');
-
-	//******************Debugging lines**********************************
-	//	$mystring = exec('/home/pi/code/checkdaily.py 2>&1', $output);
-	//	var_dump($output);
-	//*******************END*********************************************
-
-		if(!$mystring)
-		{
-			echo '<script>alert("Successfully executed!")</script>';
-		} 
-		else 
-		{
-			echo '<script>alert("Something went wrong")</script>';
-		}
-
-		//$command = exec('/home/pi/code/checkdaily.py > /dev/null 2>&1 &');
-	}
-	if(isset($_POST['stop2'])){
-		exec("sudo pkill checkdaily");
 	}
 ?>
 
@@ -131,11 +114,12 @@
 							<th>date/time</th>
 							<th>Temperature [°C]</th>
 							<th>Air Pressure [Pa]</th>
+							<th>Humidity [%]</th>
 							<th>ADCValue</th>
 						</tr>
 
 						<?php
-							$db = new SQLite3("/home/pi/code/IoT.db");	
+							$db = new SQLite3("/home/pidb/code/IoT.db");	
 							$query = "SELECT * FROM ATMEGA8_Data ORDER BY rowid DESC LIMIT 1";
 							$res =  $db->query($query) or die;
 							$dsatz = $res->fetchArray(SQLITE3_ASSOC);
@@ -147,6 +131,7 @@
 												. $dsatz["Date"] . "</td><td>" 
 												. round($dsatz["Temperature"],2) . "</td><td>" 
 												. $dsatz["Pressure"] . "</td><td>"
+												. $dsatz["Humidity"] . "</td><td>"
 												. $dsatz["ADCValue"] . "</td></tr>";
 							}
 							else 
@@ -157,14 +142,6 @@
 						?>
 					</table>
 				</td>
-			</tr>
-			<tr>
-				<td>Status Updates</td>
-				<td>
-					<form action="" method="post">
-						<input type="submit" name="start2" id="start2" value="start" />
-						<input type="submit" name="stop2" id="stop2" value="stop" />
-					</form>
 			</tr>
 		</table>
 		<p style="margin-left:200px">Date/Time: <span id="datetime"></span></p>
@@ -189,9 +166,6 @@
 		const startbtn1 = document.getElementById('start1');
 		const stopbtn1 = document.getElementById('stop1');
 		
-		const startbtn2 = document.getElementById('start2');
-		const stopbtn2 = document.getElementById('stop2');
-
 		startbtn1.addEventListener('click', function onClick() 
 		{
 			startbtn1.style.backgroundColor = 'green';
@@ -208,21 +182,6 @@
 			localStorage.removeItem('startbtncolor1');
 		});
 		
-		startbtn2.addEventListener('click', function onClick() 
-		{
-			startbtn2.style.backgroundColor = 'green';
-			startbtn2.style.color = 'white';
-			localStorage.setItem("startbtncolor2","green");
-			localStorage.removeItem('stopbtncolor2');
-		});
-		
-		stopbtn2.addEventListener('click', function onClick() 
-		{
-			stopbtn2.style.backgroundColor = 'red';
-			stopbtn2.style.color = 'white';
-			localStorage.setItem("stopbtncolor2","red");
-			localStorage.removeItem('startbtncolor2');
-		});
 	</script>
 	
 	<script> <!-- Automatic refresh after x seconds -->  

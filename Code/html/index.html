@@ -12,25 +12,25 @@
 	<!-- The sidebar -->
 	<?php include 'php/sidebar.php'; ?>
 		<main>
-			Welcome! 
+			Welcome to the air temperature and air pressure measurement system!
 			<br>
 			<br> 
-			If you would like to establish or shut a connection with a wireless device 
+			If you would like to establish or shut a connection with the measurement device 
 			<br> 
 			click on the link "Clients" on the sidebar menu.
 			<br> 
 			<br> 
-			The dropdownmenu "Logs" lists the available wireless devices.
+			The link "Logs" shows logged data in tabular form and and a plot.
 			<br> 
 			<br> 
-			To shutdown the gateway close open connections and click on the link "Shutdown" on the sidebar menu.
+			To shutdown the web server click the link "Shutdown", to restart the system click on "Restart" on the sidebar menu.
 		
-			<p>Date/Time: <span id="datetime"></span></p>
+			<p>Timestamp: <span id="datetime"></span></p>
 		</main>
 	</body>
 	<script src="js/dropdown.js"></script>
-	<script> <!-- Date/Time -->  
-		var dt = new Date();
-		document.getElementById("datetime").innerHTML = (("0"+dt.getDate()).slice(-2)) +"."+ (("0"+(dt.getMonth()+1)).slice(-2)) +"."+ (dt.getFullYear()) +" "+ (("0"+dt.getHours()).slice(-2)) +":"+ (("0"+dt.getMinutes()).slice(-2));
+	<script> <!-- Timestamp -->  
+		var dt = new Date().toISOString();
+		document.getElementById("datetime").textContent = dt;
 	</script>
 </html>

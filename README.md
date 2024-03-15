@@ -1,7 +1,8 @@
 # Raspberry Pi installer
-This release handles all the necessary packages and configurations for the measurement system.
+This shell script handles all the necessary packages and configurations for the measurement system.
+While running the installer the user will be prompted to input their username and set a password for the apache2 website.
 
-Run the following file to >do something with sudo<:
+Execute following command to start the installer shell script:
 ```sh
 sudo sh installer.sh
 ```

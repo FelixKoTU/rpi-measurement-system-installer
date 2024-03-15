@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html>
 	<head>
 	<!-- for the sidebar -->
@@ -45,10 +45,11 @@
 					<th>date/time</th>
 					<th>Temperature [°C]</th>
 					<th>Air Pressure [Pa]</th>
+					<th>Humidity [%]</th>
 					<th>ADCValue</th>
 				</tr>
 				<?php
-					$db = new SQLite3("/home/pi/Store_MQTT_Data_in_Database/IoT.db");	
+					$db = new SQLite3("/home/pidb/code/IoT.db");	
 					$query = "select * from ATMEGA8_Data";
 					$res =  $db->query($query) or die;
 					$count = $db->querySingle("SELECT COUNT(*) as count FROM ATMEGA8_Data");
@@ -61,12 +62,14 @@
 									. $dsatz["Date"] . "</td><td>" 
 									. round($dsatz["Temperature"],2) . "</td><td>" 
 									. $dsatz["Pressure"] . "</td><td>"
+									. $dsatz["Humidity"] . "</td><td>"
 									. $dsatz["ADCValue"] . "</td></tr>";
 									
 							$dataId = $dataId . '"' . $dsatz["id"] . '",';
 							$dataDate = $dataDate . '"' . $dsatz["Date"] . '",';
 							$dataTemperature = $dataTemperature . '"' . round($dsatz["Temperature"],2) . '",';
 							$dataPressure = $dataPressure . '"' . $dsatz["Pressure"] . '",';
+							$dataHumidity = $dataHumidity . '"' . $dsatz["Humidity"] . '",';
 							$dataADCValue = $dataADCValue . '"' . $dsatz["ADCValue"] . '",';
 						}
 					}
@@ -120,13 +123,14 @@
 						data: [<?php echo $dataPressure; ?>],
 						label: "pressure [Pa]",
 						borderColor: "#3cba9f",
-						fill: false
-					}, { 
+						fill: false,
+						yAxisID: 'pressure-axis'
+					}/*, { 
 						data: [<?php echo $dataADCValue; ?>],
 						label: "ADCValue",
 						borderColor: "#e8c3b9",
 						fill: false
-					}]
+					}*/]
 			},
 			options: {
 				responsive: true,
@@ -135,13 +139,34 @@
 					zoom: {
 						pan: {
 							enabled:true,
-							mode:'x',
+							mode:'xy',
 							threshold:10
 						},
 						zoom: {
 							wheel: {
 								enabled:true
 							}
+						}
+					}
+				},
+				scales: {
+					y: {
+						beginAtZero: true
+					},
+					'pressure-axis': {
+						beginAtZero: false,
+						type: 'linear',
+						position: 'right',
+						/*
+						ticks: {
+							callback: function(value, index, values) {
+								return value.toFixed(0);
+							}
+						},
+						*/
+						scaleLabel: {
+							display: true,
+							labelString: 'pressure [bar]'
 						}
 					}
 				}

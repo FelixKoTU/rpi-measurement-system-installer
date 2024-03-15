@@ -1,4 +1,4 @@
-#!/usr/bin/python3.7
+#!/usr/bin/python3
 
 #------------------------------------------
 #--- Author: Pradeep Singh
@@ -19,12 +19,13 @@ DB_Name =  "IoT.db"
 # SQLite DB Table Schema
 # Change Table Name and Values according to your preferences
 TableSchema="""
-drop table if exists ATMEGA8_Data ;
+drop table if exists ATMEGA8_Data;
 create table ATMEGA8_Data (
   id integer primary key autoincrement,
   Date text,
   Temperature text,
   Pressure text,
+  Humidity text,
   ADCValue text
 );
 """

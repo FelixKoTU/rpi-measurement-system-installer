@@ -1,4 +1,4 @@
-#!/usr/bin/python3.7
+#!/usr/bin/python3
 
 #------------------------------------------
 #--- Author: Markus Kollarik
@@ -57,7 +57,7 @@ for p in ports:
 if ("ttyACM0" or "ttyACM1") not in desc: #check if Arduino is connected to an USB port
 	raise Exception("Arduino not connected")
 
-conn = sqlite3.connect("/home/pi/Store_MQTT_Data_in_Database/IoT.db") #connect to the database
+conn = sqlite3.connect("/home/pidb/code/IoT.db") #connect to the database
 cursor = conn.cursor()
 
 try:
@@ -78,6 +78,7 @@ try:
 		if b"receive" in s.readline():
 			temp = []
 			press = []
+			humid = []
 			adc = []
 			#s.readline().rstrip() #skip receive
 			s.readline().rstrip() #first byte represents packetnumber
@@ -85,19 +86,22 @@ try:
 				temp.append(int(s.readline().strip(b'\r\n')))
 			for x in range(4):
 				press.append(int(s.readline().rstrip()))
+			for x in range(4):
+				humid.append(int(s.readline().rstrip()))
 			for x in range(2):
 				adc.append(int(s.readline().rstrip()))
 				
-			#print(temp)
+			print(temp)
 			#print(''.join(map(str,(struct.unpack('<f', bytearray(temp))))))
 
 			date = datetime.now()
 			datestamp = date.strftime("%Y-%m-%d %H:%M:%S")
 			print(datestamp)
-			query = """INSERT INTO ATMEGA8_Data (Date, Temperature, Pressure, ADCValue) VALUES (?,?,?,?)"""
+			query = """INSERT INTO ATMEGA8_Data (Date, Temperature, Pressure, Humidity, ADCValue) VALUES (?,?,?,?,?)"""
 			tuple = (datestamp, 
 					''.join(map(str,(struct.unpack('<f', bytearray(temp))))),
 					''.join(map(str,(struct.unpack('<l', bytearray(press))))), 
+					''.join(map(str,(struct.unpack('<l', bytearray(humid))))), 
 					''.join(map(str,(struct.unpack('<H', bytearray(adc))))))
 			cursor.execute(query, tuple)
 			conn.commit()
