@@ -7,6 +7,7 @@ PACKAGES="php sqlite3 php-sqlite3 apache2"
 apt-get update
 apt-get upgrade -y
 apt-get install $PACKAGES -y
+
 # ------
 # Enable ssh
 echo "Enable ssh:"
@@ -17,6 +18,7 @@ if sudo systemctl is-active --quiet ssh; then
 else
     echo "SSH not enabled. Please check the configuration manually by typing 'sudo raspi-config'."
 fi
+
 # ------
 # Move files to correct directories
 prompt_input() {
@@ -33,7 +35,7 @@ while [ "$CONFIRM" != "Y" ] && [ "$CONFIRM" != "y" ] && [ "$CONFIRM" != "" ]; do
 done
 
 echo "Username entered successfully!"
-echo -e "\n"
+echo "\n"
 echo "Move files to correct directories:"
 
 PYTHON_SOURCE_DIR="./Code/Python" 
@@ -59,6 +61,11 @@ if [ "$(ls -A $HTML_DESTINATION_DIR)" ]; then
 else
     echo "Error while moving files. Check destination directory: ${HTML_DESTINATION_DIR}."
 fi
+
+# ------
+# Set USB permissions
+usermod -a -G dialout www-data
+
 # ------
 # Set visudo permissions
 echo "Set visudo permissions"
@@ -72,33 +79,28 @@ if ! grep -Fxq "$CUSTOM_CMDS_LINE" /etc/sudoers && ! grep -Fxq "$WWW_DATA_LINE" 
 else
     echo "visudo lines already exist in /etc/sudoers."
 fi
+
 # ------
 # Apache2 webserver
 # check if Apache2 user has been set up correctly and cofigure all necessary files
 HTACCESS_FILE="/var/www/html/.htaccess"
-USER_HOME_DOCS="/home/$USER/Documents"
-HTPASSWD_FILE="$USER_HOME_DOCS/.htpasswd"
+HTPASSWD_FILE="/home/$USER/Documents/.htpasswd"
 
 # create the .htpasswd file with user password
-echo "Create the .htpasswd file."
-printf "Enter password:"
-stty -echo
-read PASSWORD
-stty echo
-echo "$PASSWORD" | htpasswd −c −B "$HTPASSWD_FILE" "$USER"
+htpasswd -cB "$HTPASSWD_FILE" "$USER"
 
 # rewrite .htaccess file
-echo "AuthUserFile $HTPASSWD_FILE" > "$HTACCESS_FILE"
-echo "AuthType Basic" > "$HTACCESS_FILE"
-echo 'AuthName "My restricted Area"' > "$HTACCESS_FILE"
-echo "Require valid-user" > "$HTACCESS_FILE"
-echo "ErrorDocument 404 /404.html" > "$HTACCESS_FILE"
+echo "AuthUserFile $HTPASSWD_FILE" >> "$HTACCESS_FILE"
+echo "AuthType Basic" >> "$HTACCESS_FILE"
+echo 'AuthName "My restricted Area"' >> "$HTACCESS_FILE"
+echo "Require valid-user" >> "$HTACCESS_FILE"
+echo "ErrorDocument 404 /404.html" >> "$HTACCESS_FILE"
 # enable php in html
-echo "AddHandler application/x-httpd-php.html" > "$HTACCESS_FILE"
+echo "AddHandler application/x-httpd-php .html" >> "$HTACCESS_FILE"
 
 # adjust '/etc/apache2/apache2.conf' file and restart web server
 echo "Adjust '/etc/apache2/apache2.conf' file and restart web server."
-sed -i 's/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
+sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' "/etc/apache2/apache2.conf"
 a2enmod rewrite
 service apache2 restart
 
@@ -110,3 +112,11 @@ if echo "$servstat" | grep -q "active (running)"; then
 else
     echo "Apache2 is not running."
 fi
+
+# ------ TODOs
+# Initialize DB and chmod and group of IoT.db
+#python3 /home/"$USER"/code/initialize_DB_Tables.py
+
+# ------
+# reboot rpi
+#reboot
