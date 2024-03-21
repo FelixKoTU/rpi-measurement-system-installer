@@ -18,6 +18,7 @@ if sudo systemctl is-active --quiet ssh; then
 else
     echo "SSH not enabled. Please check the configuration manually by typing 'sudo raspi-config'."
 fi
+echo "\n"
 
 # ------
 # Move files to correct directories
@@ -65,6 +66,7 @@ fi
 # ------
 # Set USB permissions
 usermod -a -G dialout www-data
+echo "\n"
 
 # ------
 # Set visudo permissions
@@ -73,12 +75,13 @@ CUSTOM_CMDS_LINE="Cmnd_Alias CUSTOM_CMDS = /usr/bin/pkill, /usr/sbin/shutdown -h
 WWW_DATA_LINE="www-data ALL = NOPASSWD: CUSTOM_CMDS"
 # Check if the lines already exist in the sudoers file
 if ! grep -Fxq "$CUSTOM_CMDS_LINE" /etc/sudoers && ! grep -Fxq "$WWW_DATA_LINE" /etc/sudoers; then
-    echo "$CUSTOM_CMDS_LINE" | sudo tee -a /etc/sudoers
-    echo "$WWW_DATA_LINE" | sudo tee -a /etc/sudoers
+    echo "$CUSTOM_CMDS_LINE" | sudo tee -a /etc/sudoers > /dev/null 2>&1
+    echo "$WWW_DATA_LINE" | sudo tee -a /etc/sudoers > /dev/null 2>&1
     echo "visudo lines appended to /etc/sudoers."
 else
     echo "visudo lines already exist in /etc/sudoers."
 fi
+echo "\n"
 
 # ------
 # Apache2 webserver
@@ -97,12 +100,14 @@ echo "Require valid-user" >> "$HTACCESS_FILE"
 echo "ErrorDocument 404 /404.html" >> "$HTACCESS_FILE"
 # enable php in html
 echo "AddHandler application/x-httpd-php .html" >> "$HTACCESS_FILE"
+echo "\n"
 
 # adjust '/etc/apache2/apache2.conf' file and restart web server
 echo "Adjust '/etc/apache2/apache2.conf' file and restart web server."
 sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' "/etc/apache2/apache2.conf"
 a2enmod rewrite
 service apache2 restart
+echo "\n"
 
 # check if apache2 web server is running
 servstat=$(service apache2 status)
@@ -112,10 +117,17 @@ if echo "$servstat" | grep -q "active (running)"; then
 else
     echo "Apache2 is not running."
 fi
+echo "\n"
 
 # ------ TODOs
 # Initialize DB and chmod and group of IoT.db
-#python3 /home/"$USER"/code/initialize_DB_Tables.py
+echo "Create sqlite3 db in '/home/$USER/code/' and set file and owner permissions."
+cd /home/$USER/code/
+python3 /home/$USER/code/initialize_DB_Tables.py
+chown www-data:www-data /home/$USER/code/IoT.db
+chmod 775 /home/$USER/code/IoT.db
+cd -
+echo "\n"
 
 # ------
 # reboot rpi
