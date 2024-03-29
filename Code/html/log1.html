@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html>
 	<head>
 	<!-- for the sidebar -->
@@ -62,14 +62,14 @@
 									. $dsatz["Date"] . "</td><td>" 
 									. round($dsatz["Temperature"],2) . "</td><td>" 
 									. $dsatz["Pressure"] . "</td><td>"
-									. $dsatz["Humidity"] . "</td><td>"
+									. round($dsatz["Humidity"] / 1000,1) . "</td><td>"
 									. $dsatz["ADCValue"] . "</td></tr>";
 									
 							$dataId = $dataId . '"' . $dsatz["id"] . '",';
 							$dataDate = $dataDate . '"' . $dsatz["Date"] . '",';
 							$dataTemperature = $dataTemperature . '"' . round($dsatz["Temperature"],2) . '",';
 							$dataPressure = $dataPressure . '"' . $dsatz["Pressure"] . '",';
-							$dataHumidity = $dataHumidity . '"' . $dsatz["Humidity"] . '",';
+							$dataHumidity = $dataHumidity . '"' . round($dsatz["Humidity"]/1000,1) . '",';
 							$dataADCValue = $dataADCValue . '"' . $dsatz["ADCValue"] . '",';
 						}
 					}
@@ -125,6 +125,12 @@
 						borderColor: "#3cba9f",
 						fill: false,
 						yAxisID: 'pressure-axis'
+					}, { 
+						data: [<?php echo $dataHumidity; ?>],
+						label: "humidity [%]",
+						borderColor: "#ffff00",
+						fill: false,
+						/*yAxisID: 'humidity-axis'*/
 					}/*, { 
 						data: [<?php echo $dataADCValue; ?>],
 						label: "ADCValue",
@@ -168,7 +174,7 @@
 							display: true,
 							labelString: 'pressure [bar]'
 						}
-					}
+						}
 				}
 			}
 		});

@@ -131,7 +131,7 @@
 												. $dsatz["Date"] . "</td><td>" 
 												. round($dsatz["Temperature"],2) . "</td><td>" 
 												. $dsatz["Pressure"] . "</td><td>"
-												. $dsatz["Humidity"] . "</td><td>"
+												. round($dsatz["Humidity"] / 1000,1) . "</td><td>"
 												. $dsatz["ADCValue"] . "</td></tr>";
 							}
 							else 
