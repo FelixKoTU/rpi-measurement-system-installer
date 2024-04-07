@@ -87,7 +87,7 @@ echo "\n"
 # Apache2 webserver
 # check if Apache2 user has been set up correctly and cofigure all necessary files
 HTACCESS_FILE="/var/www/html/.htaccess"
-HTPASSWD_FILE="/home/$USER/Documents/.htpasswd"
+HTPASSWD_FILE="/home/$USER/.htpasswd"
 
 # create the .htpasswd file with user password
 htpasswd -cB "$HTPASSWD_FILE" "$USER"
