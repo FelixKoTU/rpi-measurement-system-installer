@@ -64,11 +64,6 @@ else
 fi
 
 # ------
-# Set USB permissions
-usermod -a -G dialout www-data
-echo "\n"
-
-# ------
 # Set visudo permissions
 echo "Set visudo permissions"
 CUSTOM_CMDS_LINE="Cmnd_Alias CUSTOM_CMDS = /usr/bin/pkill, /usr/sbin/shutdown -h now, /usr/sbin/shutdown -r now"
@@ -119,14 +114,20 @@ else
 fi
 echo "\n"
 
-# ------ TODOs
+# ------
+# Set USB permissions
+usermod -a -G dialout www-data
+echo "\n"
+
+# ------
 # Initialize DB and chmod and group of IoT.db
-echo "Create sqlite3 db in '/home/$USER/code/' and set file and owner permissions."
-cd /home/$USER/code/
+echo "Create sqlite3 db in '/home/$USER/code/' and set various file and owner permissions."
 python3 /home/$USER/code/initialize_DB_Tables.py
+chmod 644 /home/$USER/code/IoT.db
 chown www-data:www-data /home/$USER/code/IoT.db
-chmod 775 /home/$USER/code/IoT.db
-cd -
+chmod 777 /home/$USER/code
+chmod 775 /home/$USER/code/saveTest.py
+chown pidb:www-data /home/$USER/code/saveTest.py
 echo "\n"
 
 # ------
