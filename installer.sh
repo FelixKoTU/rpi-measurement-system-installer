@@ -145,4 +145,5 @@ echo "\n"
 
 # ------
 # Reboot
+echo "Initiate reboot - establish a new ssh connection with the rpi to access the device."
 reboot
