@@ -21,22 +21,29 @@ fi
 echo "\n"
 
 # ------
-# Move files to correct directories
-prompt_input() {
-    read -p "Please enter your username (non root user): " USER
-    echo "You entered: $USER"
-    read -p "Is the username you entered correct? [Y/n] " CONFIRM
-}
-
-prompt_input
-
-while [ "$CONFIRM" != "Y" ] && [ "$CONFIRM" != "y" ] && [ "$CONFIRM" != "" ]; do
-    echo "Invalid input. Please try again."
-    prompt_input
-done
-
-echo "Username entered successfully!"
+# Parse current user into variable 
+USER=$(who am i | awk '{print $1}')
 echo "\n"
+
+## Alternatively query user input 
+# prompt_input() {
+#     read -p "Please enter your username (non root user): " USER
+#     echo "You entered: $USER"
+#     read -p "Is the username you entered correct? [Y/n] " CONFIRM
+# }
+
+# prompt_input
+
+# while [ "$CONFIRM" != "Y" ] && [ "$CONFIRM" != "y" ] && [ "$CONFIRM" != "" ]; do
+#     echo "Invalid input. Please try again."
+#     prompt_input
+# done
+
+# echo "Username entered successfully!"
+# echo "\n"
+
+# ------
+# Move files to correct directories
 echo "Move files to correct directories:"
 
 PYTHON_SOURCE_DIR="./Code/Python" 
@@ -62,6 +69,7 @@ if [ "$(ls -A $HTML_DESTINATION_DIR)" ]; then
 else
     echo "Error while moving files. Check destination directory: ${HTML_DESTINATION_DIR}."
 fi
+echo "\n"
 
 # ------
 # Set visudo permissions
@@ -117,7 +125,6 @@ echo "\n"
 # ------
 # Set USB permissions
 usermod -a -G dialout www-data
-echo "\n"
 
 # ------
 # Initialize DB and chmod and group of IoT.db
@@ -132,3 +139,7 @@ chown pidb:pidb /home/$USER/code/*
 chmod 774 /home/$USER/code/
 chmod 774 /home/$USER/code/*
 echo "\n"
+
+# ------
+# Reboot
+reboot
