@@ -122,19 +122,11 @@ echo "\n"
 # ------
 # Initialize DB and chmod and group of IoT.db
 echo "Create sqlite3 db in '/home/$USER/code/' and set various file and owner permissions."
-chmod 777 /home/$USER/code
+usermod -aG pidb www-data
+mkdir /home/$USER/code/logs
 chown pidb:pidb /home/$USER/code
 cd /home/$USER/code
 python3 /home/$USER/code/initialize_DB_Tables.py
-chmod 775 /home/$USER/code/initialize_DB_Tables.py
-chown pidb:www-data /home/$USER/code/initialize_DB_Tables.py
 cd -
-chmod 644 /home/$USER/code/IoT.db
-chown www-data:www-data /home/$USER/code/IoT.db
-chmod 775 /home/$USER/code/saveTest.py
-chown pidb:www-data /home/$USER/code/saveTest.py
+chmod 774 /home/$USER/code/*
 echo "\n"
-
-# ------
-# reboot rpi
-#reboot
