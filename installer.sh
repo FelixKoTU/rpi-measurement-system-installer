@@ -5,7 +5,7 @@ echo "\n"
 
 # ------
 # Install packages
-echo "System update and installing packages:"
+echo "System update and installing packages"
 PACKAGES="php sqlite3 php-sqlite3 apache2"
 apt-get update
 apt-get upgrade -y
@@ -13,7 +13,7 @@ apt-get install $PACKAGES -y
 
 # ------
 # Enable ssh
-echo "Enable ssh:"
+echo "Enable ssh"
 systemctl enable ssh
 systemctl start ssh
 if sudo systemctl is-active --quiet ssh; then
@@ -27,7 +27,6 @@ echo "\n"
 # Parse current user into variable 
 USER=$(who am i | awk '{print $1}')
 echo "\n"
-
 ## Alternatively query user input 
 # prompt_input() {
 #     read -p "Please enter your username (non root user): " USER
@@ -47,7 +46,7 @@ echo "\n"
 
 # ------
 # Move files to correct directories
-echo "Move files to correct directories:"
+echo "Move files to correct directories"
 
 PYTHON_SOURCE_DIR="./Code/Python" 
 PYTHON_DESTINATION_DIR="/home/$USER/code"
@@ -55,7 +54,7 @@ PYTHON_DESTINATION_DIR="/home/$USER/code"
 HTML_SOURCE_DIR="./Code/html"
 HTML_DESTINATION_DIR="/var/www/html"
 
-echo "Creating directories:"
+echo "Creating directories"
 mkdir -p "$PYTHON_DESTINATION_DIR"
 mkdir -p "$HTML_DESTINATION_DIR"
 
@@ -96,6 +95,7 @@ HTACCESS_FILE="/var/www/html/.htaccess"
 HTPASSWD_FILE="/home/$USER/.htpasswd"
 
 # create the .htpasswd file with user password
+echo "Choose Apache2 website password"
 htpasswd -cB "$HTPASSWD_FILE" "$USER"
 
 # rewrite .htaccess file

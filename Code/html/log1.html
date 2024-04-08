@@ -120,17 +120,16 @@
 						borderColor: "#8e5ea2",
 						fill: false
 					}, { 
+						data: [<?php echo $dataHumidity; ?>],
+						label: "humidity [%]",
+						borderColor: "#ffff00",
+						fill: false,
+					}, { 
 						data: [<?php echo $dataPressure; ?>],
 						label: "pressure [Pa]",
 						borderColor: "#3cba9f",
 						fill: false,
 						yAxisID: 'pressure-axis'
-					}, { 
-						data: [<?php echo $dataHumidity; ?>],
-						label: "humidity [%]",
-						borderColor: "#ffff00",
-						fill: false,
-						/*yAxisID: 'humidity-axis'*/
 					}/*, { 
 						data: [<?php echo $dataADCValue; ?>],
 						label: "ADCValue",
