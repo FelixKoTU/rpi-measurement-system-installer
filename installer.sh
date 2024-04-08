@@ -124,9 +124,11 @@ echo "\n"
 echo "Create sqlite3 db in '/home/$USER/code/' and set various file and owner permissions."
 usermod -aG pidb www-data
 mkdir /home/$USER/code/logs
-chown pidb:pidb /home/$USER/code
 cd /home/$USER/code
 python3 /home/$USER/code/initialize_DB_Tables.py
 cd -
+chown pidb:pidb /home/$USER/code/
+chown pidb:pidb /home/$USER/code/*
+chmod 774 /home/$USER/code/
 chmod 774 /home/$USER/code/*
 echo "\n"
