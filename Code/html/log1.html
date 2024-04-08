@@ -156,28 +156,38 @@
 					}
 				},
 				scales: {
-					y: {
-						beginAtZero: true
-					},
-					'pressure-axis': {
-						beginAtZero: false,
-						type: 'linear',
-						position: 'right',
-						/*
-						ticks: {
-							callback: function(value, index, values) {
-								return value.toFixed(0);
-							}
-						},
-						*/
-						scaleLabel: {
-							display: true,
-							labelString: 'pressure [bar]'
-						}
-						}
-				}
-			}
-		});
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'day'
+                        },
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Datetime'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        type: 'linear',
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Temperature [°C], Humidity [%]'
+                        }
+                    },
+                    'pressure-axis': {
+                        beginAtZero: false,
+                        type: 'linear',
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Pressure [Pa]'
+                        }
+                    }
+                }
+            }
+        });
 		
 		function resetZoomChart(){
 			myChart.resetZoom();

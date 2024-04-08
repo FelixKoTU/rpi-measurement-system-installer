@@ -1,5 +1,8 @@
 #!/bin/sh
 # installer.sh handles packages, dependencies, user permissions, system configurations for the rpi measurement system.
+echo "This shell script installer is used to set up a Raspberry Pi Model 2B after installing the OS and enabling ssh connection via the rpi-imager."
+echo "\n"
+
 # ------
 # Install packages
 echo "System update and installing packages:"
