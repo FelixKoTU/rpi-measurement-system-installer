@@ -59,8 +59,8 @@ echo "Set visudo permissions."
 CUSTOM_CMDS_LINE="Cmnd_Alias CUSTOM_CMDS = /usr/bin/pkill, /usr/sbin/shutdown -h now, /usr/sbin/shutdown -r now"
 WWW_DATA_LINE="www-data ALL = NOPASSWD: CUSTOM_CMDS"
 if ! grep -Fxq "$CUSTOM_CMDS_LINE" /etc/sudoers && ! grep -Fxq "$WWW_DATA_LINE" /etc/sudoers; then
-    echo "$CUSTOM_CMDS_LINE" | tee -a /etc/sudoers > /dev/null 2>&1
-    echo "$WWW_DATA_LINE" | tee -a /etc/sudoers > /dev/null 2>&1
+    echo "$CUSTOM_CMDS_LINE" >> /etc/sudoers
+    echo "$WWW_DATA_LINE" >> /etc/sudoers
     echo "visudo lines appended to /etc/sudoers successfully."
 else
     echo "visudo lines already exist in /etc/sudoers."
