@@ -9,6 +9,7 @@ echo "System update and installing packages"
 PACKAGES="php sqlite3 php-sqlite3 apache2"
 apt update
 apt upgrade -y
+# shellcheck disable=SC2086
 apt install $PACKAGES -y
 echo
 
@@ -107,13 +108,13 @@ usermod -aG dialout www-data
 # ------
 # Initialize DB and chmod and group of IoT.db
 echo "Create sqlite3 db and set various file and owner permissions."
-usermod -aG pidb www-data
-mkdir -p /home/$USER/code/logs
-cd /home/$USER/code
-python3 /home/$USER/code/initialize_DB_Tables.py
-cd - > /dev/null 2>&1
-chown pidb:pidb /home/$USER/code/ /home/$USER/code/* 
-chmod -R 774 /home/$USER/code/
+usermod -aG "$USER" www-data
+mkdir -p "/home/$USER/code/logs"
+cd "/home/$USER/code" || exit
+python3 "/home/$USER/code/initialize_DB_Tables.py"
+cd - > /dev/null 2>&1 || exit
+chown "$USER:$USER" "/home/$USER/code/" "/home/$USER/code/"*
+chmod -R 774 "/home/$USER/code/"
 echo
 
 # ------
