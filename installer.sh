@@ -26,7 +26,7 @@ echo
 
 # ------
 # Parse current user into variable 
-USER=$(whoami)
+USER=$SUDO_USER
 echo
 
 # ------
