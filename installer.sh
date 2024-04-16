@@ -26,7 +26,7 @@ echo
 
 # ------
 # Parse current user into variable 
-USER=$(who am i | awk '{print $1}')
+USER=$(whoami)
 echo
 
 # ------
@@ -111,7 +111,7 @@ usermod -aG pidb www-data
 mkdir -p /home/$USER/code/logs
 cd /home/$USER/code
 python3 /home/$USER/code/initialize_DB_Tables.py
-cd -
+cd - > /dev/null 2>&1
 chown pidb:pidb /home/$USER/code/ /home/$USER/code/* 
 chmod -R 774 /home/$USER/code/
 echo
