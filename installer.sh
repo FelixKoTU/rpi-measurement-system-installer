@@ -10,6 +10,7 @@ PACKAGES="php sqlite3 php-sqlite3 apache2"
 apt update
 apt upgrade -y
 apt install $PACKAGES -y
+echo
 
 # ------
 # Enable ssh (if not already activated)
@@ -17,7 +18,7 @@ echo "Enable SSH"
 systemctl enable ssh
 systemctl start ssh
 if systemctl is-active --quiet ssh; then
-    echo "SSH has been enabled successfully."
+    echo "SSH has been enabled successfully or has already been enabled."
 else
     echo "SSH not enabled. Please check the configuration manually by typing 'sudo raspi-config'."
 fi
@@ -30,24 +31,23 @@ echo
 
 # ------
 # Move files to correct directories
-echo "Move files to correct directories"
 PYTHON_SOURCE_DIR="./Code/Python"
 PYTHON_DESTINATION_DIR="/home/$USER/code"
 HTML_SOURCE_DIR="./Code/html"
 HTML_DESTINATION_DIR="/var/www/html"
-echo "Creating directories"
+echo "Creating directories."
 mkdir -p "$PYTHON_DESTINATION_DIR"
 mkdir -p "$HTML_DESTINATION_DIR"
-echo "Moving files"
+echo "Moving files..."
 mv "$PYTHON_SOURCE_DIR"/* "$PYTHON_DESTINATION_DIR/"
 mv "$HTML_SOURCE_DIR"/* "$HTML_DESTINATION_DIR/"
 if [ "$(ls -A "$PYTHON_DESTINATION_DIR")" ]; then
-    echo "Python files moved succesfully"
+    echo "Python files moved succesfully."
 else
     echo "Error while moving files. Check destination directory: ${PYTHON_DESTINATION_DIR}."
 fi
 if [ "$(ls -A $HTML_DESTINATION_DIR)" ]; then
-    echo "HTML files moved succesfully"
+    echo "HTML files moved succesfully."
 else
     echo "Error while moving files. Check destination directory: ${HTML_DESTINATION_DIR}."
 fi
@@ -55,13 +55,13 @@ echo
 
 # ------
 # Set visudo permissions
-echo "Set visudo permissions"
+echo "Set visudo permissions."
 CUSTOM_CMDS_LINE="Cmnd_Alias CUSTOM_CMDS = /usr/bin/pkill, /usr/sbin/shutdown -h now, /usr/sbin/shutdown -r now"
 WWW_DATA_LINE="www-data ALL = NOPASSWD: CUSTOM_CMDS"
 if ! grep -Fxq "$CUSTOM_CMDS_LINE" /etc/sudoers && ! grep -Fxq "$WWW_DATA_LINE" /etc/sudoers; then
     echo "$CUSTOM_CMDS_LINE" | tee -a /etc/sudoers > /dev/null 2>&1
     echo "$WWW_DATA_LINE" | tee -a /etc/sudoers > /dev/null 2>&1
-    echo "visudo lines appended to /etc/sudoers."
+    echo "visudo lines appended to /etc/sudoers successfully."
 else
     echo "visudo lines already exist in /etc/sudoers."
 fi
@@ -72,7 +72,7 @@ echo
 HTACCESS_FILE="/var/www/html/.htaccess"
 HTPASSWD_FILE="/home/$USER/.htpasswd"
 # Create the .htpasswd file with user password
-echo "Choose Apache2 website password"
+echo "Choose Apache2 website password."
 htpasswd -cB "$HTPASSWD_FILE" "$USER"
 # Rewrite .htaccess file
 echo "AuthUserFile $HTPASSWD_FILE" >> "$HTACCESS_FILE"
@@ -106,7 +106,7 @@ usermod -aG dialout www-data
 
 # ------
 # Initialize DB and chmod and group of IoT.db
-echo "Create sqlite3 db in '/home/$USER/code/' and set various file and owner permissions."
+echo "Create sqlite3 db and set various file and owner permissions."
 usermod -aG pidb www-data
 mkdir -p /home/$USER/code/logs
 cd /home/$USER/code
