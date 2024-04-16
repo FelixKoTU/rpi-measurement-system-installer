@@ -30,12 +30,16 @@ echo
 USER=$SUDO_USER
 echo
 
+
+
 # ------
 # Move files to correct directories
 PYTHON_SOURCE_DIR="./Code/Python"
 PYTHON_DESTINATION_DIR="/home/$USER/code"
 HTML_SOURCE_DIR="./Code/html"
 HTML_DESTINATION_DIR="/var/www/html"
+echo "Replace username in html files with current username."
+sed -i "s/pidb/$USER/g" "$HTML_SOURCE_DIR/clients.html" "$HTML_SOURCE_DIR/log1.html"
 echo "Creating directories."
 mkdir -p "$PYTHON_DESTINATION_DIR"
 mkdir -p "$HTML_DESTINATION_DIR"
