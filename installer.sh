@@ -1,18 +1,18 @@
 #!/bin/sh
 # installer.sh handles packages, dependencies, user permissions, system configurations for the rpi measurement system.
-echo "This shell script installer is used to set up a Raspberry Pi Model 2B after installing the OS and enabling ssh connection via the rpi-imager."
+echo "This shell script installer is used to set up a Raspberry Pi 2 Model B for a low power wireless measurement system."
 echo
 
 # ------
 # Install packages
 echo "System update and installing packages"
 PACKAGES="php sqlite3 php-sqlite3 apache2"
-apt-get update
-apt-get upgrade -y
-apt-get install $PACKAGES -y
+apt update
+apt upgrade -y
+apt install $PACKAGES -y
 
 # ------
-# Enable ssh
+# Enable ssh (if not already activated)
 echo "Enable SSH"
 systemctl enable ssh
 systemctl start ssh
@@ -27,23 +27,6 @@ echo
 # Parse current user into variable 
 USER=$(who am i | awk '{print $1}')
 echo
-
-# Alternatively query user input 
-# prompt_input() {
-#     read -p "Please enter your username (non root user): " USER
-#     echo "You entered: $USER"
-#     read -p "Is the username you entered correct? [Y/n] " CONFIRM
-# }
-
-# prompt_input
-
-# while [ "$CONFIRM" != "Y" ] && [ "$CONFIRM" != "y" ] && [ "$CONFIRM" != "" ]; do
-#     echo "Invalid input. Please try again."
-#     prompt_input
-# done
-
-# echo "Username entered successfully!"
-# echo
 
 # ------
 # Move files to correct directories
@@ -76,8 +59,8 @@ echo "Set visudo permissions"
 CUSTOM_CMDS_LINE="Cmnd_Alias CUSTOM_CMDS = /usr/bin/pkill, /usr/sbin/shutdown -h now, /usr/sbin/shutdown -r now"
 WWW_DATA_LINE="www-data ALL = NOPASSWD: CUSTOM_CMDS"
 if ! grep -Fxq "$CUSTOM_CMDS_LINE" /etc/sudoers && ! grep -Fxq "$WWW_DATA_LINE" /etc/sudoers; then
-    echo "$CUSTOM_CMDS_LINE" | sudo tee -a /etc/sudoers > /dev/null 2>&1
-    echo "$WWW_DATA_LINE" | sudo tee -a /etc/sudoers > /dev/null 2>&1
+    echo "$CUSTOM_CMDS_LINE" | tee -a /etc/sudoers > /dev/null 2>&1
+    echo "$WWW_DATA_LINE" | tee -a /etc/sudoers > /dev/null 2>&1
     echo "visudo lines appended to /etc/sudoers."
 else
     echo "visudo lines already exist in /etc/sudoers."
@@ -110,7 +93,7 @@ echo
 
 # Check if apache2 web server is running
 if service apache2 status | grep -q "active (running)"; then
-    echo "Apache2 web server set up successfully. Paste the local IP address into the web browser of the RPi."
+    echo "Apache2 web server set up successfully."
     echo "Local IP address: $(hostname -I)"
 else
     echo "Apache2 is not running."
