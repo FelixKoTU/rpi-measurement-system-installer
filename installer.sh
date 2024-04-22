@@ -30,8 +30,6 @@ echo
 USER=$SUDO_USER
 echo
 
-
-
 # ------
 # Move files to correct directories
 PYTHON_SOURCE_DIR="./Code/Python"
