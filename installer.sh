@@ -15,6 +15,7 @@ echo
 
 # -----
 # Set timezone (if not already set)
+echo "Set timezone to Europe/Vienna"
 timedatectl set-timezone Europe/Vienna
 echo
 
