@@ -86,7 +86,8 @@ set_htpasswd() {
     htpasswd -cB "$HTPASSWD_FILE" "$USER"
 }
 until set_htpasswd; do
-    echo "Invalid password. Please try again."
+    echo "Password does not match. Please try again."
+    echo
 done
 # Rewrite .htaccess file
 echo "AuthUserFile $HTPASSWD_FILE" >> "$HTACCESS_FILE"
