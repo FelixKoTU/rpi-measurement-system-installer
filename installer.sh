@@ -84,7 +84,7 @@ set_htpasswd() {
     echo "Choose Apache2 website password."
     htpasswd -cB "$HTPASSWD_FILE" "$USER"
 }
-until update_htpasswd; do
+until set_htpasswd; do
     echo "Invalid password. Please try again."
 done
 # Rewrite .htaccess file
