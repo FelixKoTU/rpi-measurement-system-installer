@@ -80,8 +80,13 @@ echo
 HTACCESS_FILE="/var/www/html/.htaccess"
 HTPASSWD_FILE="/home/$USER/.htpasswd"
 # Create the .htpasswd file with user password
-echo "Choose Apache2 website password."
-htpasswd -cB "$HTPASSWD_FILE" "$USER"
+set_htpasswd() {
+    echo "Choose Apache2 website password."
+    htpasswd -cB "$HTPASSWD_FILE" "$USER"
+}
+until update_htpasswd; do
+    echo "Invalid password. Please try again."
+done
 # Rewrite .htaccess file
 echo "AuthUserFile $HTPASSWD_FILE" >> "$HTACCESS_FILE"
 echo "AuthType Basic" >> "$HTACCESS_FILE"
