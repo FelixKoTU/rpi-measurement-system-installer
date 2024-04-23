@@ -151,8 +151,8 @@
 	<!-- for the sidebar -->
 	<script src="js/dropdown.js"></script>
 	<script> <!-- Date/Time -->  
-		var dt = new Date();
-		document.getElementById("datetime").innerHTML = (("0"+dt.getDate()).slice(-2)) +"."+ (("0"+(dt.getMonth()+1)).slice(-2)) +"."+ (dt.getFullYear()) +" "+ (("0"+dt.getHours()).slice(-2)) +":"+ (("0"+dt.getMinutes()).slice(-2));
+		var dt = new Date().toLocaleString("de-AT", {timeZone: "Europe/Vienna"});
+		document.getElementById("datetime").textContent = dt;
 	</script>
 	<script> <!-- change button color on click to show if python script active -->  
 		window.onload=function()

@@ -13,6 +13,11 @@ apt upgrade -y
 apt install $PACKAGES -y
 echo
 
+# -----
+# Set timezone (if not already set)
+timedatectl set-timezone Europe/Vienna
+echo
+
 # ------
 # Enable ssh (if not already activated)
 echo "Enable SSH"

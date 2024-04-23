@@ -30,7 +30,7 @@
 	</body>
 	<script src="js/dropdown.js"></script>
 	<script> <!-- Timestamp -->  
-		var dt = new Date().toISOString();
+		var dt = new Date().toLocaleString("de-AT", {timeZone: "Europe/Vienna"});
 		document.getElementById("datetime").textContent = dt;
 	</script>
 </html>
